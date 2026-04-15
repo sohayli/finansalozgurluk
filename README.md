@@ -1,0 +1,2 @@
+# finansalozgurluk
+finansalozgurluk
