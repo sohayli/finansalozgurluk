@@ -148,6 +148,9 @@
 				
 				if (asset.type === 'crypto') {
 					priceEndpoint = '/api/prices/crypto/' + asset.symbol;
+				} else if (asset.type === 'fund' && asset.market === 'bist') {
+					// TEFAS fund - use TEFAS API
+					priceEndpoint = '/api/tefas/fund/' + asset.symbol;
 				}
 				
 				const response = await fetch(priceEndpoint);
@@ -156,9 +159,9 @@
 				if (result.success && result.data) {
 					const quote = result.data;
 					
-					// Convert USD to TRY if needed (simple conversion)
+					// TEFAS funds return price directly, others have nested structure
 					let currentPrice = quote.price;
-					let currentCurrency = quote.currency;
+					let currentCurrency = asset.type === 'fund' ? 'TRY' : (quote.currency || 'USD');
 					
 					// Update asset in database
 					const { err } = await supabase
