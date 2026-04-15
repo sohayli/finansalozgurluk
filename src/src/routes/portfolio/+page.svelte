@@ -2,6 +2,12 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { supabase } from '$lib/supabase';
+	import Card from '$lib/components/ui/card/index.svelte';
+	import CardContent from '$lib/components/ui/card/content.svelte';
+	import Button from '$lib/components/ui/button/index.svelte';
+	import Input from '$lib/components/ui/input/index.svelte';
+	import Label from '$lib/components/ui/label/index.svelte';
+	import Select from '$lib/components/ui/select/index.svelte';
 	
 	let portfolios = $state<any[]>([]);
 	let loading = $state(true);
@@ -87,32 +93,25 @@
 			portfolios = portfolios.filter(p => p.id !== id);
 		}
 	}
-	
-	function openPortfolio(id: string) {
-		goto(`/portfolio/${id}`);
-	}
 </script>
 
 <div class="container mx-auto px-4 py-8">
 	<header class="mb-8">
 		<div class="flex justify-between items-center">
 			<div>
-				<h1 class="text-3xl font-bold text-gray-900">Portföylerim</h1>
-				<p class="text-gray-600 mt-1">Yatırım portföylerini yönetin</p>
+				<h1 class="text-3xl font-bold">Portföylerim</h1>
+				<p class="text-muted-foreground mt-1">Yatırım portföylerini yönetin</p>
 			</div>
-			<button
-				class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2"
-				onclick={() => showAddModal = true}
-			>
-				<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+			<Button onclick={() => showAddModal = true}>
+				<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
 				</svg>
 				Yeni Portföy
-			</button>
+			</Button>
 		</div>
 		
 		{#if error}
-			<div class="mt-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+			<div class="mt-4 bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-md">
 				{error}
 			</div>
 		{/if}
@@ -120,116 +119,105 @@
 	
 	{#if loading}
 		<div class="flex justify-center py-12">
-			<svg class="animate-spin h-8 w-8 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+			<svg class="animate-spin h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24">
 				<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
 				<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
 			</svg>
 		</div>
 	{:else if portfolios.length === 0}
-		<div class="bg-white rounded-lg shadow p-12 text-center">
-			<svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
-			</svg>
-			<h3 class="text-xl font-semibold text-gray-700 mb-2">Henüz portföyünüz yok</h3>
-			<p class="text-gray-500 mb-4">Yatırım portföyünü oluşturun ve takibe başlayın</p>
-			<button
-				class="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors"
-				onclick={() => showAddModal = true}
-			>
-				İlk Portföyü Oluştur
-			</button>
-		</div>
+		<Card class="text-center">
+			<CardContent class="p-12">
+				<svg class="w-16 h-16 text-muted-foreground mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+				</svg>
+				<h3 class="text-xl font-semibold mb-2">Henüz portföyünüz yok</h3>
+				<p class="text-muted-foreground mb-4">Yatırım portföyünü oluşturun ve takibe başlayın</p>
+				<Button onclick={() => showAddModal = true}>
+					İlk Portföyü Oluştur
+				</Button>
+			</CardContent>
+		</Card>
 	{:else}
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 			{#each portfolios as portfolio (portfolio.id)}
-				<div class="bg-white rounded-lg shadow hover:shadow-lg transition-shadow cursor-pointer" onclick={() => openPortfolio(portfolio.id)}>
-					<div class="p-6">
-						<div class="flex justify-between items-start mb-4">
-							<h3 class="text-xl font-semibold text-gray-900">{portfolio.name}</h3>
-							<span class="text-sm text-gray-500">{portfolio.currency}</span>
-						</div>
-						
-						{#if portfolio.description}
-							<p class="text-gray-600 mb-4">{portfolio.description}</p>
-						{/if}
-						
-						<div class="flex justify-between items-center text-sm text-gray-500">
-							<span>Oluşturulma: {new Date(portfolio.created_at).toLocaleDateString('tr-TR')}</span>
-							<button
-								class="text-red-600 hover:text-red-800"
-								onclick={(e) => { e.stopPropagation(); deletePortfolio(portfolio.id); }}
-							>
-								Sil
-							</button>
-						</div>
-					</div>
-				</div>
+				<a href="/portfolio/{portfolio.id}">
+					<Card class="hover:shadow-lg transition-shadow cursor-pointer">
+						<CardContent class="p-6">
+							<div class="flex justify-between items-start mb-4">
+								<h3 class="text-xl font-semibold">{portfolio.name}</h3>
+								<span class="text-sm text-muted-foreground">{portfolio.currency}</span>
+							</div>
+							
+							{#if portfolio.description}
+								<p class="text-muted-foreground mb-4">{portfolio.description}</p>
+							{/if}
+							
+							<div class="flex justify-between items-center text-sm">
+								<span class="text-muted-foreground">
+									{new Date(portfolio.created_at).toLocaleDateString('tr-TR')}
+								</span>
+								<Button 
+									variant="destructive" 
+									size="sm"
+									onclick={(e) => { e.preventDefault(); e.stopPropagation(); deletePortfolio(portfolio.id); }}
+								>
+									Sil
+								</Button>
+							</div>
+						</CardContent>
+					</Card>
+				</a>
 			{/each}
 		</div>
 	{/if}
 	
-	<!-- Add Portfolio Modal -->
 	{#if showAddModal}
-		<div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onclick={() => showAddModal = false}>
-			<div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4" onclick={(e) => e.stopPropagation()}>
-				<div class="p-6">
+		<div class="fixed inset-0 bg-black/80 flex items-center justify-center z-50" onclick={() => showAddModal = false}>
+			<Card class="max-w-md w-full mx-4" onclick={(e) => e.stopPropagation()}>
+				<CardContent class="p-6">
 					<h2 class="text-2xl font-bold mb-6">Yeni Portföy Oluştur</h2>
 					
-					<form onsubmit={createPortfolio}>
-						<div class="space-y-4">
-							<div>
-								<label class="block text-sm font-medium text-gray-700 mb-1">Portföy Adı</label>
-								<input
-									type="text"
-									class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-									placeholder="Örn: Ana Portföy, Emeklilik Fonu"
-									bind:value={newPortfolio.name}
-									required
-								/>
-							</div>
-							
-							<div>
-								<label class="block text-sm font-medium text-gray-700 mb-1">Açıklama</label>
-								<textarea
-									class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-									placeholder="Portföy hakkında kısa açıklama"
-									bind:value={newPortfolio.description}
-									rows="3"
-								></textarea>
-							</div>
-							
-							<div>
-								<label class="block text-sm font-medium text-gray-700 mb-1">Para Birimi</label>
-								<select
-									class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-									bind:value={newPortfolio.currency}
-								>
-									<option value="TRY">Türk Lirası (₺)</option>
-									<option value="USD">US Dollar ($)</option>
-									<option value="EUR">Euro (€)</option>
-								</select>
-							</div>
+					<form onsubmit={createPortfolio} class="space-y-4">
+						<div>
+							<Label for="name">Portföy Adı</Label>
+							<Input 
+								id="name"
+								placeholder="Örn: Ana Portföy, Emeklilik Fonu"
+								bind:value={newPortfolio.name}
+								required
+							/>
 						</div>
 						
-						<div class="flex gap-3 mt-6">
-							<button
-								type="button"
-								class="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-								onclick={() => showAddModal = false}
-							>
+						<div>
+							<Label for="desc">Açıklama</Label>
+							<textarea
+								id="desc"
+								class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+								placeholder="Portföy hakkında kısa açıklama"
+								bind:value={newPortfolio.description}
+							></textarea>
+						</div>
+						
+						<div>
+							<Label for="currency">Para Birimi</Label>
+							<Select id="currency" bind:value={newPortfolio.currency}>
+								<option value="TRY">Türk Lirası (₺)</option>
+								<option value="USD">US Dollar ($)</option>
+								<option value="EUR">Euro (€)</option>
+							</Select>
+						</div>
+						
+						<div class="flex gap-3">
+							<Button type="button" variant="outline" onclick={() => showAddModal = false} class="flex-1">
 								İptal
-							</button>
-							<button
-								type="submit"
-								class="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
-								disabled={loading}
-							>
+							</Button>
+							<Button type="submit" disabled={loading} class="flex-1">
 								{#if loading}Oluşturuyor...{:else}Oluştur{/if}
-							</button>
+							</Button>
 						</div>
 					</form>
-				</div>
-			</div>
+				</CardContent>
+			</Card>
 		</div>
 	{/if}
 </div>
