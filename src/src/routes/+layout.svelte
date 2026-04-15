@@ -2,6 +2,8 @@
 	import { supabase } from '$lib/supabase';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
+	import { Nav, NavLink, Head } from '$lib/components';
+	import { page } from '$app/state';
 	
 	let { children } = $props();
 	let user = $state<any>(null);
@@ -27,53 +29,53 @@
 	}
 	
 	const navItems = [
-		{ path: '/', label: 'Dashboard', icon: 'dashboard' },
-		{ path: '/portfolio', label: 'Portföy', icon: 'portfolio' },
-		{ path: '/goals', label: 'Hedefler', icon: 'goals' },
-		{ path: '/budget', label: 'Bütçe', icon: 'budget' },
-		{ path: '/settings', label: 'Ayarlar', icon: 'settings' }
+		{ path: '/', label: 'Dashboard' },
+		{ path: '/portfolio', label: 'Portföy' },
+		{ path: '/goals', label: 'Hedefler' },
+		{ path: '/budget', label: 'Bütçe' }
 	];
 </script>
 
-<svelte:head>
-	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<link rel="manifest" href="/manifest.json" />
-	<title>Finansal Özgürlük</title>
-</svelte:head>
+<Head />
 
-<div class="min-h-screen bg-gray-50">
+<div class="min-h-screen bg-background relative">
 	{#if isAuthenticated}
-		<!-- Navigation Header -->
-		<nav class="bg-white shadow-sm">
-			<div class="container mx-auto px-4">
-				<div class="flex justify-between h-16">
-					<div class="flex items-center">
-						<a href="/" class="text-xl font-bold text-indigo-600">Finansal Özgürlük</a>
-					</div>
-					
-					<div class="flex items-center gap-4">
-						<div class="flex gap-2">
-							{#each navItems as item}
-								<a href={item.path} class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-indigo-600 transition-colors">
-									{item.label}
-								</a>
-							{/each}
-						</div>
-						
-						<div class="border-l pl-4 flex items-center gap-3">
-							<span class="text-sm text-gray-600">{user?.email}</span>
-							<button
-								class="text-sm text-gray-600 hover:text-red-600 transition-colors"
-								onclick={handleLogout}
-							>
-								Çıkış Yap
-							</button>
-						</div>
-					</div>
+		<Nav>
+			<div class="flex items-center gap-8">
+				<a href="/" class="text-xl font-bold text-gradient">
+					Finansal Özgürlük
+				</a>
+				
+				<div class="flex gap-1">
+					{#each navItems as item}
+						<NavLink href={item.path} active={page.url.pathname === item.path}>
+							{item.label}
+						</NavLink>
+					{/each}
 				</div>
 			</div>
-		</nav>
+			
+			<div class="flex items-center gap-4">
+				<span class="text-sm text-muted-foreground">{user?.email}</span>
+				<button
+					class="btn btn-ghost btn-sm text-destructive"
+					onclick={handleLogout}
+				>
+					Çıkış Yap
+				</button>
+			</div>
+		</Nav>
+		
+		<div class="gradient-mesh"></div>
 	{/if}
 	
-	{@render children()}
+	<div class="container py-8">
+		{@render children()}
+	</div>
+	
+	<footer class="py-12 text-center">
+		<p class="text-sm text-muted-foreground">
+			Finansal Özgürlük v2.0 • Dark Theme
+		</p>
+	</footer>
 </div>

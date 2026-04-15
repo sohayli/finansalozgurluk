@@ -2,12 +2,7 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { supabase } from '$lib/supabase';
-	import Card from '$lib/components/ui/card/index.svelte';
-	import CardContent from '$lib/components/ui/card/content.svelte';
-	import Button from '$lib/components/ui/button/index.svelte';
-	import Input from '$lib/components/ui/input/index.svelte';
-	import Label from '$lib/components/ui/label/index.svelte';
-	import Select from '$lib/components/ui/select/index.svelte';
+	import { Card, CardContent, Button, Input, Label, Select } from '$lib/components';
 	
 	let portfolios = $state<any[]>([]);
 	let loading = $state(true);
@@ -95,12 +90,12 @@
 	}
 </script>
 
-<div class="container mx-auto px-4 py-8">
+<div class="section">
 	<header class="mb-8">
 		<div class="flex justify-between items-center">
 			<div>
-				<h1 class="text-3xl font-bold">Portföylerim</h1>
-				<p class="text-muted-foreground mt-1">Yatırım portföylerini yönetin</p>
+				<h1 class="text-4xl font-bold tracking-tight">Portföylerim</h1>
+				<p class="text-muted text-lg mt-2">Yatırım portföylerini yönetin</p>
 			</div>
 			<Button onclick={() => showAddModal = true}>
 				<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -111,7 +106,7 @@
 		</div>
 		
 		{#if error}
-			<div class="mt-4 bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-md">
+			<div class="mt-4 alert alert-destructive">
 				{error}
 			</div>
 		{/if}
@@ -125,35 +120,35 @@
 			</svg>
 		</div>
 	{:else if portfolios.length === 0}
-		<Card class="text-center">
+		<Card class="text-center animate-fade-up">
 			<CardContent class="p-12">
-				<svg class="w-16 h-16 text-muted-foreground mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<svg class="w-16 h-16 text-muted mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
 				</svg>
 				<h3 class="text-xl font-semibold mb-2">Henüz portföyünüz yok</h3>
-				<p class="text-muted-foreground mb-4">Yatırım portföyünü oluşturun ve takibe başlayın</p>
+				<p class="text-muted mb-4">Yatırım portföyünü oluşturun ve takibe başlayın</p>
 				<Button onclick={() => showAddModal = true}>
 					İlk Portföyü Oluştur
 				</Button>
 			</CardContent>
 		</Card>
 	{:else}
-		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+		<div class="grid-cards">
 			{#each portfolios as portfolio (portfolio.id)}
 				<a href="/portfolio/{portfolio.id}">
-					<Card class="hover:shadow-lg transition-shadow cursor-pointer">
+					<Card class="animate-fade-up">
 						<CardContent class="p-6">
 							<div class="flex justify-between items-start mb-4">
 								<h3 class="text-xl font-semibold">{portfolio.name}</h3>
-								<span class="text-sm text-muted-foreground">{portfolio.currency}</span>
+								<span class="badge badge-outline">{portfolio.currency}</span>
 							</div>
 							
 							{#if portfolio.description}
-								<p class="text-muted-foreground mb-4">{portfolio.description}</p>
+								<p class="text-muted mb-4">{portfolio.description}</p>
 							{/if}
 							
 							<div class="flex justify-between items-center text-sm">
-								<span class="text-muted-foreground">
+								<span class="text-muted">
 									{new Date(portfolio.created_at).toLocaleDateString('tr-TR')}
 								</span>
 								<Button 
@@ -172,8 +167,8 @@
 	{/if}
 	
 	{#if showAddModal}
-		<div class="fixed inset-0 bg-black/80 flex items-center justify-center z-50" onclick={() => showAddModal = false}>
-			<Card class="max-w-md w-full mx-4" onclick={(e) => e.stopPropagation()}>
+		<div class="modal-backdrop" onclick={() => showAddModal = false}>
+			<Card class="modal-content" onclick={(e) => e.stopPropagation()}>
 				<CardContent class="p-6">
 					<h2 class="text-2xl font-bold mb-6">Yeni Portföy Oluştur</h2>
 					
@@ -192,9 +187,10 @@
 							<Label for="desc">Açıklama</Label>
 							<textarea
 								id="desc"
-								class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+								class="input"
 								placeholder="Portföy hakkında kısa açıklama"
 								bind:value={newPortfolio.description}
+								rows="3"
 							></textarea>
 						</div>
 						
@@ -207,7 +203,7 @@
 							</Select>
 						</div>
 						
-						<div class="flex gap-3">
+						<div class="flex gap-3 mt-6">
 							<Button type="button" variant="outline" onclick={() => showAddModal = false} class="flex-1">
 								İptal
 							</Button>

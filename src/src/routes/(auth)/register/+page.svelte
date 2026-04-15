@@ -1,13 +1,7 @@
 <script lang="ts">
 	import { supabase } from '$lib/supabase';
 	import { goto } from '$app/navigation';
-	import Button from '$lib/components/ui/button/index.svelte';
-	import Input from '$lib/components/ui/input/index.svelte';
-	import Label from '$lib/components/ui/label/index.svelte';
-	import Card from '$lib/components/ui/card/index.svelte';
-	import CardHeader from '$lib/components/ui/card/header.svelte';
-	import CardTitle from '$lib/components/ui/card/title.svelte';
-	import CardContent from '$lib/components/ui/card/content.svelte';
+	import { Card, CardHeader, CardTitle, CardContent, Button, Input, Label } from '$lib/components';
 	
 	let email = $state('');
 	let password = $state('');
@@ -56,23 +50,23 @@
 	}
 </script>
 
-<div class="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-	<Card class="w-full max-w-md">
+<div class="min-h-screen flex items-center justify-center px-4 hero-gradient">
+	<Card class="w-full max-w-md animate-fade-up">
 		<CardHeader>
 			<CardTitle>Kayıt Ol</CardTitle>
-			<p class="text-sm text-muted-foreground mt-2">
+			<p class="card-description">
 				Finansal Özgürlük hesabınızı oluşturun
 			</p>
 		</CardHeader>
 		<CardContent>
 			<form onsubmit={handleSubmit} class="space-y-4">
 				{#if error}
-					<div class="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-md text-sm">
+					<div class="alert alert-destructive">
 						{error}
 					</div>
 				{/if}
 				
-				<div class="space-y-2">
+				<div>
 					<Label for="email">Email</Label>
 					<Input 
 						id="email"
@@ -83,7 +77,7 @@
 					/>
 				</div>
 				
-				<div class="space-y-2">
+				<div>
 					<Label for="password">Şifre</Label>
 					<Input 
 						id="password"
@@ -92,10 +86,10 @@
 						bind:value={password}
 						required
 					/>
-					<p class="text-xs text-muted-foreground">En az 6 karakter</p>
+					<p class="text-xs text-muted-foreground mt-1">En az 6 karakter</p>
 				</div>
 				
-				<div class="space-y-2">
+				<div>
 					<Label for="confirm">Şifreyi Onayla</Label>
 					<Input 
 						id="confirm"
@@ -121,7 +115,7 @@
 			
 			<div class="mt-4 text-center text-sm">
 				<span class="text-muted-foreground">Zaten hesabınız var mı?</span>
-				<a href="/login" class="text-primary hover:underline ml-1">Giriş Yap</a>
+				<a href="/login" class="text-primary-accent hover:underline ml-1">Giriş Yap</a>
 			</div>
 		</CardContent>
 	</Card>
